@@ -1,0 +1,19 @@
+# 
+# Based on -> https://www.youtube.com/watch?v=3ayI--eot4o
+#
+# Note: Latest (2022) recommendation is to not need a 'version' field.
+#
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:latest"
+    volumes:
+      - ./config:/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    ports: 
+      - "8123:8123"
+
+# -e TZ="Europe/Helsinki"
