@@ -1,0 +1,66 @@
+
+# Based on:
+#   ->  {tbd. link}
+#
+# Also influenced by:
+#   -> https://spin.atomicobject.com/2022/10/06/z-wave-js-ui-via-docker/
+#
+# Note: 'version' within Docker Compose files is "bygones". Not needed.
+#
+# Preparation:
+#   On Windows 10|11 (see README!):
+#     - # plug in the Z-Wave dongle
+#     - PS> usbipd wsl detach --busid 3-1
+#
+# Usage: 
+#   $ docker up zwave-js-ui   # only launch ZWave-JS-UI
+#
+#   $ docker up     # Launch both Home Assistant and ZWave-JS-UI
+#
+services:
+  home-assistant:
+    container_name: home-assistant
+    image: lscr.io/linuxserver/homeassistant:2022.9.6-ls97
+    network_mode: host
+    restart: unless-stopped
+
+    depends_on:
+      - zwave-js-ui
+    #env_file:
+    #  - ./common.env
+    #  - ./secret.env
+    volumes:
+      - ./home-assistant-config:/config
+
+  zwave-js-ui:
+    container_name: zwave-js-ui
+    image: zwavejs/zwave-js-ui:latest
+    restart: unless-stopped     # official has: always
+    #tty: true                  # mentioned in official
+    #stop_signal: SIGINT        # mentioned in official
+    #user: ${PUID}:${PGID}
+
+    environment:
+      #- SESSION_SECRET=mysupersecretkey
+      #- ZWAVEJS_EXTERNAL_CONFIG=/usr/src/app/store/.config-db
+      # Use if you want logs time and dates to match your timezone instead of UTC; -> https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+      - TZ=Europe/Helsinki
+
+    devices:
+      # NOTE: Ignore suggestions to use '/dev/serial/by-id' in documentation. WSL doesn't have that and we'll 'usbipd' only one device to WSL.
+      - '/dev/ttyUSB0:/dev/zwave'
+
+    #networks:
+    #  - zwave
+    volumes:
+      - ./store:/usr/src/app/store
+    ports:
+      - '8091:8091'   # web interface
+      #- '3000:3000'   # Z-Wave JS websocket server (for Home Assistant)
+
+#networks:
+#  zwave:
+
+#volumes:
+#  zwave-config:
+#    name: zwave-config
