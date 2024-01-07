@@ -1,14 +1,20 @@
 
-# My Home Assistant
+# My ZWave
 
-Running [Home Assistant](https://www.home-assistant.io) within Docker, under Windows 10.
+This used to be called "MyHomeAssistant", but I have the feel HA is not really welcome in the equation. I just need it for scheduling, and it comes with ... so much. :/
+
+Thus changing the title.
+
+Running [Home Assistant](https://www.home-assistant.io) within Docker, under Windows 10 Home.
 
 ## Design criteria
 
 ### Safety
 
 I don't want to give the Docker container `privileged: true` rights (i.e. ability to do anything
-with the host Windows). Instead, we bridge the dongle to WSL using USB/IP.
+with the host Windows), or `networking: host` for that matter, either.
+
+Instead, we bridge the dongle to WSL using USB/IP. ZWave-JS-UI takes care of handling the peripherals.
 
 ### Persistence
 
@@ -20,7 +26,7 @@ with the host Windows). Instead, we bridge the dongle to WSL using USB/IP.
 - [`usbipd-win`](https://github.com/dorssel/usbipd-win) installed
 
 
-## Steps
+## Steps (ZWave JS UI)
 
 1. Expose Z-Wave dongle to WSL
 
@@ -70,9 +76,16 @@ with the host Windows). Instead, we bridge the dongle to WSL using USB/IP.
    
    >In Z-Wave, the controller remembers the devices it's been paired with.
 
-4. Schedules
+## Steps (Home Assistant)
 
-   
+ZWave-JS-UI doesn't seem to provide any means for scheduling actions (e.g. switching on/off power at certain times). We may need Home Assistant just for that.
+
+```
+$ docker compose up home-assistant
+```
+
+Open [localhost:8123](http://localhost:8123).
+
 
 ## Appendices
 
@@ -91,8 +104,7 @@ To add a device:
 
    ![](.images/manage-nodes.png)
 
-- 
-
+- Enter the names; triple-click the device once the UI waits for inclusion. Should be fast and clear.
 
 
 ## References

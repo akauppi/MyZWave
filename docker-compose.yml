@@ -1,4 +1,4 @@
-
+#
 # Based on:
 #   ->  {tbd. link}
 #
@@ -18,19 +18,21 @@
 # Note: 'version' within Docker Compose files is "bygones". Not needed.
 #
 services:
-  #!home-assistant:
-  #!  container_name: home-assistant
-  #!  image: lscr.io/linuxserver/homeassistant:2022.9.6-ls97
-  #!  network_mode: host
-  #!  restart: unless-stopped
-#!
-  #!  depends_on:
-  #!    - zwave-js-ui
-  #!  #env_file:
-  #!  #  - ./common.env
-  #!  #  - ./secret.env
-  #!  volumes:
-  #!    - ./home-assistant-config:/config
+  home-assistant:
+    container_name: home-assistant
+    image: homeassistant/home-assistant:latest
+    #!image: lscr.io/linuxserver/homeassistant:2022.9.6-ls97
+    restart: unless-stopped
+    #
+    depends_on:
+      - zwave-js-ui
+    environment:
+      - TZ=Europe/Helsinki
+    volumes:
+      - ${HOME}/home-assistant-config:/config
+    network_mode: host
+    ports:
+      - '8123:8123'   # web interface
 
   zwave-js-ui:
     container_name: zwave-js-ui
@@ -56,7 +58,7 @@ services:
       - ./store:/usr/src/app/store
     ports:
       - '8091:8091'   # web interface
-      #- '3000:3000'   # Z-Wave JS websocket server (for Home Assistant)
+      - '3000:3000'   # Z-Wave JS websocket server (Note: Home Assistant uses this via the browser, so it needs to be exposed)
 
 #networks:
 #  zwave:
