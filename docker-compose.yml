@@ -5,32 +5,32 @@
 # Also influenced by:
 #   -> https://spin.atomicobject.com/2022/10/06/z-wave-js-ui-via-docker/
 #
-# Note: 'version' within Docker Compose files is "bygones". Not needed.
-#
 # Preparation:
 #   On Windows 10|11 (see README!):
 #     - # plug in the Z-Wave dongle
-#     - PS> usbipd wsl detach --busid 3-1
+#     - PS> usbipd attach --wsl -b 3-1
 #
 # Usage: 
-#   $ docker up zwave-js-ui   # only launch ZWave-JS-UI
+#   $ docker compose up zwave-js-ui   # only launch ZWave-JS-UI
 #
-#   $ docker up     # Launch both Home Assistant and ZWave-JS-UI
+#   $ docker compose up     # Launch both Home Assistant and ZWave-JS-UI
+#
+# Note: 'version' within Docker Compose files is "bygones". Not needed.
 #
 services:
-  home-assistant:
-    container_name: home-assistant
-    image: lscr.io/linuxserver/homeassistant:2022.9.6-ls97
-    network_mode: host
-    restart: unless-stopped
-
-    depends_on:
-      - zwave-js-ui
-    #env_file:
-    #  - ./common.env
-    #  - ./secret.env
-    volumes:
-      - ./home-assistant-config:/config
+  #!home-assistant:
+  #!  container_name: home-assistant
+  #!  image: lscr.io/linuxserver/homeassistant:2022.9.6-ls97
+  #!  network_mode: host
+  #!  restart: unless-stopped
+#!
+  #!  depends_on:
+  #!    - zwave-js-ui
+  #!  #env_file:
+  #!  #  - ./common.env
+  #!  #  - ./secret.env
+  #!  volumes:
+  #!    - ./home-assistant-config:/config
 
   zwave-js-ui:
     container_name: zwave-js-ui
