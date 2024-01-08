@@ -21,16 +21,15 @@ services:
   home-assistant:
     container_name: home-assistant
     image: homeassistant/home-assistant:latest
-    #!image: lscr.io/linuxserver/homeassistant:2022.9.6-ls97
     restart: unless-stopped
     #
     depends_on:
-      - zwave-js-ui
+      zwave-js-ui:
+        condition: service_healthy
     environment:
       - TZ=Europe/Helsinki
     volumes:
       - ${HOME}/home-assistant-config:/config
-    network_mode: host
     ports:
       - '8123:8123'   # web interface
 
@@ -59,6 +58,19 @@ services:
     ports:
       - '8091:8091'   # web interface
       - '3000:3000'   # Z-Wave JS websocket server (Note: Home Assistant uses this via the browser, so it needs to be exposed)
+
+    # Health check to keep dependent services ('home-assistant') from starting when we're still launching. Makes things more determenistic.
+    #
+    # Note: 'zwavejs/zwave-js-ui:latest' image has 'wget', has not 'curl'.
+    # Note: Docker Compose officially only takes '1' as "unhealthy"; other codes are "reserved - don't use" (a bit bad design decision, perhaps??)
+    #     -> https://docs.docker.com/engine/reference/builder/#healthcheck
+    #
+    healthcheck:
+      test: wget -nv -t1 --spider localhost:8091 || exit 1
+      interval: 3s
+      timeout: 2s
+      retries: 8
+      start_period: 3s
 
 #networks:
 #  zwave:
