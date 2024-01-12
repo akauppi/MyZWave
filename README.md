@@ -26,7 +26,7 @@ Instead, we bridge the dongle to WSL using USB/IP. ZWave-JS-UI takes care of han
 - [`usbipd-win`](https://github.com/dorssel/usbipd-win) installed
 
 
-## Steps (ZWave JS UI)
+## Steps
 
 1. Expose Z-Wave dongle to WSL
 
@@ -76,16 +76,73 @@ Instead, we bridge the dongle to WSL using USB/IP. ZWave-JS-UI takes care of han
    
    >In Z-Wave, the controller remembers the devices it's been paired with.
 
-## Steps (Home Assistant)
+4. Attach the devices
 
-ZWave-JS-UI doesn't seem to provide any means for scheduling actions (e.g. switching on/off power at certain times). We may need Home Assistant just for that.
+   <font color=red>tbd. Missing</font>
 
-```
-$ docker compose up home-assistant
-```
+5. `Control Panel` > (device) > `Values`
 
-Open [localhost:8123](http://localhost:8123).
+   ![](.images/zwave-switch-manual.png)
 
+   Note the `5-37-0` id - you can use it to script the particular device.
+
+   >Note: Press `Configure` > `Get` if the above doesn't show.
+
+6. `Settings` > `General` > `Scheduled jobs`
+
+   ![](.images/schedules.png)
+
+   >NOTE!! When you do changes here - or ANY Zwave-JS-UI settings, THEY DON*T REMAIN EFFECTIVE UNLESS YOU PRESS `SAVE` AT THE BOTTOM OF THE PAGE. MAKE IT A HABIT!
+
+   - `+ NEW VALUE`
+   - Enter suitable name, cron syntax and as the script e.g. 
+
+   ![](.images/script.png)
+
+   >Note: Naturally, use the id's from the visit to the control panel, e.g. `5`, `37`, `0`.
+
+7. `Settings` > `Disable MQTT Gateway`
+
+   Doesn't matter but we don't need it.
+
+7. `Debug`
+
+   Observe that the schedules happen.
+
+## Gotchas
+
+### Editing scripts
+
+You *can* edit scripts, but it has some glitches / UX weirdness:
+
+- Cursor seems to disappear when it's at the left edge (merges with the border)
+
+   Work-around: indent *all* lines with one space!
+
+- Read `EDIT` button as "save". That's what it does.
+
+- After the "edit-save", STILL REMEMBER TO `SAVE` the whole `Settings` > `General` tab, before exiting the `Settings` area. THE UI DOES LOSE UNCHANGED CHANGES!
+
+>Note. Don't know what happens if there are syntax errors in  
+
+## Summary?
+
+Having explored ZWave a bit, the author is:
+
+- pleased with ZWave-JS-UI, at least for:
+   - detecting and managing ZWave nodes
+
+- ..knows that the nodes can be automated with it, but **with restrictions**
+   - there's no good reference on how to write a "driver" (scheduled command) for a said device. 
+   - there's no visual indication if a string is syntactically correct, or not
+   - UX details (mentioned above) about editing schedules make it a bit.. unpleasant
+
+For these reasons, I will likely
+
+- set up the system with this *for now*. 
+- look into ZWave command-line scheduling possibilities, using Rust.
+
+There was no need for Home Assistant, whatsoever. It could be removed from the `docker-compose.yml`; or you could tell, how the two can be made to co-operate.
 
 ## Appendices
 
@@ -106,6 +163,15 @@ To add a device:
 
 - Enter the names; triple-click the device once the UI waits for inclusion. Should be fast and clear.
 
+## Remember to update!
+
+Docker doesn't automatically pull `:latest`. Every now and then:
+
+- `docker compose down`
+- Pull new from Docker UI, or manually
+- `docker compose up zwave-js-ui`
+
+Only way to get updates!
 
 ## References
 
@@ -113,3 +179,4 @@ To add a device:
 
 - [Installing Home Assistant on Docker, Docker Compose and Portainer](https://www.youtube.com/watch?v=3ayI--eot4o) (Youtube, Aug 2022; 10:33)
 
+- [Any way to schedule simple commands?](https://github.com/zwave-js/zwave-js-ui/issues/3507) (`zwave-js-ui` GitHub Discussion; Jan 2024)

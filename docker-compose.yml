@@ -48,7 +48,7 @@ services:
       - TZ=Europe/Helsinki
 
     devices:
-      # NOTE: Ignore suggestions to use '/dev/serial/by-id' in documentation. WSL doesn't have that and we'll 'usbipd' only one device to WSL.
+      # NOTE: Ignore suggestions to use '/dev/serial/by-id' in documentation. We'll 'usbipd' only one device to WSL.
       - '/dev/ttyUSB0:/dev/zwave'
 
     #networks:
