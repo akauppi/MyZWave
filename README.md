@@ -1,11 +1,10 @@
 
 # My ZWave
 
-This used to be called "MyHomeAssistant", but I have the feel HA is not really welcome in the equation. I just need it for scheduling, and it comes with ... so much. :/
+How I set up a minor ZWave network, with:
 
-Thus changing the title.
-
-Running [Home Assistant](https://www.home-assistant.io) within Docker, under Windows 10 Home.
+- [zwave-js-ui](https://github.com/zwave-js/zwave-js-ui)
+  .. running within Docker, under Windows 10 Home
 
 ## Design criteria
 
